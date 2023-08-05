@@ -1,0 +1,308 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: API Documentation
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+tags:
+  - name: Auth
+    description: Manage Auth API's
+  - name: Profile
+    description: Manage Profile API's
+  - name: CRUD
+    description: Manage CRUD API's
+
+paths:
+  /api/register:
+    post:
+      summary: User registration
+      description: Register a new user
+      tags:
+        - Auth
+      parameters:
+        - name: body
+          in: body
+          description: User's registration details
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              password_confirmation:
+                type: string
+              phone:
+                type: string
+      responses:
+        "201":
+          description: Registration has been successfully
+        "400":
+          description: Bad request
+  /api/login:
+    post:
+      summary: User login
+      description: Authenticate user and generate an access token
+      tags:
+        - Auth
+      parameters:
+        - name: body
+          in: body
+          description: User's login credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "tanvir.valere@gmail.com"
+              password:
+                type: string
+                example: "123456789"
+      responses:
+        "200":
+          description: Login successfully
+        "400":
+          description: Invalid_credentials
+        "500":
+          description: Could_not_create_token
+
+  /api/email/send:
+    post:
+      summary: Send mail
+      description: Send mail on user mail id for reset password
+      tags:
+        - Auth
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: User's user mail
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        "200":
+          description: Reset password link sent on your email id.
+        "400":
+          description: Bad request
+
+  /api/profile/update/{id}:
+    put:
+      summary: Update user profile
+      description: Update the user's profile information
+      tags:
+        - Profile
+      security:
+        - Bearer: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: integer
+        - name: body
+          in: body
+          description: User's updated profile details
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+      responses:
+        "200":
+          description: update profile has been successfully
+        "400":
+          description: Bad request
+
+  /api/profile/account/delete/{id}:
+    delete:
+      summary: Delete user profile
+      description: Delete the user's profile
+      tags:
+        - Profile
+      security:
+        - Bearer: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Profile deleted successfully
+        "400":
+          description: Bad request
+        "404":
+          description: Wrong user id
+
+  /api/crud/read:
+    get:
+      summary: Get all Crud
+      description: Retrieve a list of all Crud
+      tags:
+        - CRUD
+      security:
+        - Bearer: []
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Get Data List.
+        "400":
+          description: Bad request
+
+  /api/crud/create:
+    post:
+      summary: Create
+      description: Create data in CRUD operation
+      tags:
+        - CRUD
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: image
+          in: formData
+          description: Image file to upload
+          required: true
+          type: file
+
+        - name: video
+          in: formData
+          description: Video file to upload
+          required: true
+          type: file
+
+        - name: textbox
+          in: formData
+          description: Enter value here
+          required: true
+          type: string
+          example: "testing values"
+
+        - name: multiple_value
+          in: formData
+          description: Json array add here for multiple values example=> {"key1":"value one","key2":"value two"}
+          required: true
+          type: string
+      responses:
+        "201":
+          description: Data created successfully
+        "400":
+          description: Bad request
+
+  /api/crud/update:
+    post:
+      summary: Update
+      description: Update data in CRUD operation
+      tags:
+        - CRUD
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: id
+          in: formData
+          description: Enter data id here
+          required: true
+          type: string
+          example: "testing values"
+
+        - name: image
+          in: formData
+          description: Image file to upload
+          type: file
+
+        - name: video
+          in: formData
+          description: Video file to upload
+          type: file
+
+        - name: textbox
+          in: formData
+          description: Enter value here
+          required: true
+          type: string
+
+        - name: multiple_value
+          in: formData
+          description: Json array add here for multiple values example=> {"key1":"value one","key2":"value two"}
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Update data successfully
+        "400":
+          description: Bad request
+
+  /api/crud/delete/{id}:
+    delete:
+      summary: Delete
+      description: Delete data
+      tags:
+        - CRUD
+      security:
+        - Bearer: []
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Crud id
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Deleted successfully
+        "400":
+          description: Bad request
+        "404":
+          description: Wrong crud id
+
+  /api/logout/{id}:
+    post:
+      summary: Logout
+      description: Session Logout
+      tags:
+        - Auth
+      security:
+        - Bearer: []
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: path
+          description: JWT token
+          required: true
+          type: string
+      responses:
+        "200":
+          description: User successfully signed out
+        "400":
+          description: Bad request
+
+security:
+  - Bearer: []
